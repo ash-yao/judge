@@ -1,0 +1,52 @@
+# setup python virutal env
+sudo apt-get install python3 python3-pip
+pip3 install virtualenv
+mkdir -p ~/virtualenv/judge
+cd ~/virtualenv/judge
+virtualenv -p python3 ~/virtualenv/django --no-site-packages
+cd bin
+source activate
+pip3 install -r <path>/judge/requirements.txt
+
+# Create configure file and create problem file
+mkdir <path>/judge/config
+cd <path>/judge/config
+# refer to https://docs.dmoj.ca/en/latest/judge/linux_installation/ for generate configure file
+# Start by taking the runtime block from the output of the command dmoj-autoconf and put it in a new file config.yml.
+# Next, add a problem_storage_root node where you specify where your problem data is located.
+# example is put in <repo>/judge/config/* for reference
+# !!! read carefully to make the configure consistent with your local setup
+
+# install dmoj binaries into system
+cd <repo>
+python setup.py develop
+
+# verify the the problem using dmoj-cli
+dmoj-cli -c judge_conf.yml
+dmoj> help
+Run `command -h/--help` for individual command usage.
+  problems: Lists the problems available to be graded on this judge.
+  submissions: List past submissions.
+  submit: Grades a submission.
+  resubmit: Resubmit a submission with different parameters.
+  rejudge: Rejudge a submission.
+  diff: Shows difference between two files.
+  show: Shows file based on submission ID or filename.
+  quit: Exits the DMOJ command-line interface.
+
+dmoj> problems
+sig1
+
+dmoj> submit sig1 CPP11 <path_of_code>
+Start grading sig1/3 in CPP11...
+Test case  1 WA [0.002s (0.002s) | 1668kb] 
+Done grading sig1/3.
+
+# run grpc server
+dmoj-grpc -c judge_conf.yml
+
+# develop without install
+python3 dmoj/grpcserver.py -c config/judge_conf.yml
+# use laicode-fe/grpc-dmoj to test the server 
+
+# for more details refer to dmoj document: https://docs.dmoj.ca/en/latest/
