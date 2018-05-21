@@ -143,7 +143,7 @@ class StandardGrader(BaseGrader):
         process = self._current_proc
         try:
             result.proc_output, error = process.safe_communicate(input, outlimit=case.config.output_limit_length,
-                                                                 errlimit=1048576)
+                                                                 errlimit=1048576) 
         except OutputLimitExceeded as ole:
             stream, result.proc_output, error = ole.args
             log.warning('OLE on stream: %s', stream)
@@ -156,6 +156,7 @@ class StandardGrader(BaseGrader):
             # Otherwise it's a race between this kill and the shocker,
             # and failed kill means nothing.
             process.wait()
+        self.proc_stderr = error
         return error
 
     def _generate_binary(self):

@@ -7,3 +7,5 @@ cython
 pygments
 six
 setproctitle
+grpcio-tools
+grpclib

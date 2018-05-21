@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package onlinejudge;
+
+service OnlineJudge {
+  rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
+  rpc JudgeCompiledTests (CompiledJudgeRequest) returns (CompiledJudgeResponse) {}
+}
+
+//https://dmoj.ca/about/codes/
+enum langCode {
+  JAVA8 = 0;
+  CPP11 = 1;
+  C11 = 2;
+  PY2 = 3;
+  PY3 = 4;
+}
+
+message Resource {
+  string filename = 1;
+  bytes content = 2;
+}
+
+message CompiledJudgeRequest {
+  uint64 submissionID = 1;
+  uint32 totalCases = 2;
+  langCode lang = 3;
+  uint32 timelimitMS = 4;
+  uint32 memlimitKB = 5;
+  uint32 ouputlimitKB = 6;
+  repeated Resource resources = 7;
+}
+
+message CompiledJudgeResponse {
+  uint32 totalCases = 2;
+  uint32 retCode = 3;
+  uint32 runtimeMS = 4;
+  uint32 memusedKB = 5;
+  string stdOut = 6;
+  string stdErr = 7;
+  int32 ojid = 8;
+}
+
+message HealthCheckRequest {
+}
+
+message HealthCheckResponse {
+}

@@ -15,3 +15,8 @@ int main() {
     return 0;
 }
 '''
+
+    # TODO: These flags should be changed to refer to correct shared library, here we put file in /tmp/cppdynamic/
+    # How to build the shared lib and have correct header file in lib direcotry is added in laicode-fe/go/grpc-dmoj/cpplib
+    def get_ldflags(self):
+        return ["-I", "/tmp/cppdynamic", "-L/tmp/cppdynamic", "-linternal","-include","/tmp/cppdynamic/solution_prologue.inl"]

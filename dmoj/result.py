@@ -31,6 +31,7 @@ class Result(object):
         self.r_execution_time = 0
         self.max_memory = 0
         self.proc_output = ''
+        self.proc_stderr = ''
         self.feedback = ''
         self.case = case
         self.points = 0

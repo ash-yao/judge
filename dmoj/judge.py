@@ -44,7 +44,7 @@ class BatchBegin(object):
     pass
 
 
-class BatchEnd(object):
+class  BatchEnd(object):
     pass
 
 
@@ -152,7 +152,7 @@ class Judge(object):
         self.current_submission = None
 
     def _begin_grading(self, problem_id, language, source, time_limit, memory_limit, short_circuit, pretests_only,
-                       report=print):
+                       report=print, retsaver=None):
         submission_id = self.current_submission
         report(ansi_style('Start grading #ansi[%s](yellow)/#ansi[%s](green|bold) in %s...'
                           % (problem_id, submission_id, language)))
@@ -166,6 +166,8 @@ class Judge(object):
             grader_class = graders.SignatureGrader
         elif 'custom_judge' in problem.config:
             grader_class = graders.CustomGrader
+        elif 'notest_judge' in problem.config:
+            grader_class = graders.NotestGrader
         else:
             grader_class = graders.StandardGrader
 
@@ -207,10 +209,11 @@ class Judge(object):
                                                                      colored_feedback,
                                                                      colored_aux_codes) if not is_sc else ''
                         case_padding = '  ' * in_batch
-                        report(ansi_style('%sTest case %2d %-3s %s' % (case_padding, case_number,
-                                                                       colored_codes[0], case_info)))
+                        report(ansi_style('%sTest case %2d %-3s %s' % (case_padding, case_number, colored_codes[0], case_info)))
 
                         self.packet_manager.test_case_status_packet(case_number, result)
+                        if retsaver:
+                            retsaver.saveinfo(result.proc_output, result.proc_stderr, result.get_main_code(), int(result.execution_time*1000), result.max_memory)
 
                         case_number += 1
             except TerminateGrading:
@@ -275,9 +278,8 @@ class Judge(object):
             report(ansi_style('#ansi[Failed compiling submission!](red|bold)'))
             report(ce.args[0].rstrip())  # don't print extra newline
             grader = None
-        except:  # if custom grader failed to initialize, report it to the site
+        except:  # if custom grader failed to initialize, report it to the site    
             return self.internal_error()
-
         return grader
 
     def get_process_type(self):
@@ -723,7 +725,7 @@ def main():  # pragma: no cover
         except TypeError:
             pass
         logging.basicConfig(filename=logfile, level=logging.INFO,
-                            format='%(levelname)s %(asctime)s %(process)d %(name)s %(message)s')
+                            format='%(filename)s %(levelname)s %(asctime)s %(process)d %(name)s %(message)s')
         if env.pidfile:
             with open(env.pidfile) as f:
                 f.write(str(os.getpid()))

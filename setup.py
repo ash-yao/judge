@@ -156,6 +156,7 @@ setup(
             'dmoj = dmoj.judge:main',
             'dmoj-cli = dmoj.cli:main',
             'dmoj-autoconf = dmoj.executors.autoconfig:main',
+            'dmoj-grpc = dmoj.grpcserver:main',
         ],
     },
     ext_modules=cythonize(extensions),
